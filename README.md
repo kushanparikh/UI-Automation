@@ -37,6 +37,13 @@ ui-automation/
 - **Automatic screenshot capture on test failure** (via `TestNGListener`)
 - **Manual screenshot capture at any test step** (via `ScreenshotUtil`)
 - **Retry logic** for flaky tests (`RetryAnalyzer`)
+- **Efficient session & login management** (see below)
+
+## Test Session & Login Management
+- **Login and browser session are initialized only once per test class.**
+- All tests within the same test class share the same browser session and remain logged in.
+- When a new test class starts, a new browser session and login are performed.
+- This design makes tests faster and avoids repeated logins for every test method.
 
 ## How to Run Tests
 
