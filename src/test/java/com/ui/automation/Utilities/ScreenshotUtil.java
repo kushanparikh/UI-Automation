@@ -1,7 +1,6 @@
 package com.ui.automation.Utilities;
 
 import com.aventstack.extentreports.ExtentTest;
-import com.ui.automation.DriverFactory;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
