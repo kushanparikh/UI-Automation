@@ -5,36 +5,50 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * DriverFactory manages WebDriver instances for tests.
+ * DriverFactory manages a thread-safe map of named WebDriver instances for parallel execution.
  */
 public class DriverFactory {
-    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, WebDriver>> driverMap = ThreadLocal.withInitial(HashMap::new);
 
     /**
-     * Gets the current thread's WebDriver instance, initializing it if necessary.
-     * @return the WebDriver instance
+     * Gets or creates a named WebDriver instance for the current thread.
+     * @param driverName A unique name for the driver (e.g., "POS", "BO").
+     * @return The WebDriver instance.
      */
-    public static WebDriver getDriver() {
-        if (driver.get() == null) {
+    public static WebDriver getDriver(String driverName) {
+        if (driverMap.get().get(driverName) == null) {
             WebDriverManager.chromedriver().setup();
             ChromeOptions options = new ChromeOptions();
             if (System.getProperty("headless", "false").equalsIgnoreCase("true")) {
                 options.addArguments("--headless=new");
                 options.addArguments("--disable-gpu");
             }
-            driver.set(new ChromeDriver(options));
+            driverMap.get().put(driverName, new ChromeDriver(options));
         }
-        return driver.get();
+        return driverMap.get().get(driverName);
     }
 
     /**
-     * Quits and removes the current thread's WebDriver instance.
+     * Quits a specific named WebDriver instance for the current thread.
+     * @param driverName The name of the driver to quit.
      */
-    public static void quitDriver() {
-        if (driver.get() != null) {
-            driver.get().quit();
-            driver.remove();
+    public static void quitDriver(String driverName) {
+        WebDriver driver = driverMap.get().get(driverName);
+        if (driver != null) {
+            driver.quit();
+            driverMap.get().remove(driverName);
         }
+    }
+
+    /**
+     * Quits all WebDriver instances for the current thread.
+     */
+    public static void quitAllDrivers() {
+        driverMap.get().values().forEach(WebDriver::quit);
+        driverMap.get().clear();
     }
 } 
