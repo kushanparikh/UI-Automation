@@ -19,12 +19,19 @@ ui-automation/
 │       │       │   └── BaseTest.java
 │       │       ├── Tests/
 │       │       │   └── AppTest.java
-│       │       └── Utilities/
-│       │           ├── DriverFactory.java
-│       │           ├── ExtentReportManager.java
-│       │           ├── RetryAnalyzer.java
-│       │           ├── ScreenshotUtil.java
-│       │           └── TestNGListener.java
+│       │       ├── Utilities/
+│       │       │   ├── DriverFactory.java
+│       │       │   ├── ExtentReportManager.java
+│       │       │   ├── RetryAnalyzer.java
+│       │       │   ├── ScreenshotUtil.java
+│       │       │   └── TestNGListener.java
+│       │       └── pages/
+│       │           ├── POSTransactionPage.java
+│       │           └── components/
+│       │               ├── ItemPanel.java
+│       │               ├── KeypadPanel.java
+│       │               ├── PaymentPanel.java
+│       │               └── SimulatedCustomerPanel.java
 │       └── resources/
 ├── testng.xml
 └── test-output/
@@ -38,6 +45,42 @@ ui-automation/
 - **Manual screenshot capture at any test step** (via `ScreenshotUtil`)
 - **Retry logic** for flaky tests (`RetryAnalyzer`)
 - **Efficient session & login management** (see below)
+
+## Framework Architecture (Component-Based POM)
+
+This framework uses a component-based Page Object Model (POM) to manage the complexity of the Point of Sale (POS) simulator. Even though the test application is a single page, it is divided into distinct functional areas, each managed by its own "component" class.
+
+```mermaid
+graph TD
+    subgraph Test Layer
+        A[AppTest.java] --> B[BaseTest.java];
+    end
+
+    subgraph Page Layer
+        A -- "Uses" --> C[POSTransactionPage];
+        C -- "Composed of" --> D1[ItemPanel];
+        C -- "Composed of" --> D2[PaymentPanel];
+        C -- "Composed of" --> D3[SimulatedCustomerPanel];
+        C -- "Composed of" --> D4[KeypadPanel];
+    end
+
+    subgraph Framework Core
+        B -- "Provides" --> F[Single WebDriver];
+    end
+
+    C -- "Operates on" --> F;
+    D1 -- "Operates on" --> F;
+    D2 -- "Operates on" --> F;
+    D3 -- "Operates on" --> F;
+    D4 -- "Operates on" --> F;
+```
+
+### How it Works
+- **`POSTransactionPage.java`**: Acts as the main entry point for the page. It does not contain any locators or methods for interaction itself. Instead, it initializes and provides access to all the component panels.
+- **Component Panels** (e.g., `ItemPanel`, `PaymentPanel`): Each component class is responsible for a specific area of the application. It contains the Selenium locators and methods for interacting with the elements within that area (e.g., `scanItemWithButton()`, `clickProcessPayment()`).
+- **Tests** (`AppTest.java`): Test cases are clean and readable. They orchestrate the test flow by calling methods from the different component panels via the main `POSTransactionPage`.
+
+This approach makes the framework highly organized, scalable, and easy to maintain.
 
 ## Test Session & Login Management
 - **Login and browser session are initialized only once per test class.**
