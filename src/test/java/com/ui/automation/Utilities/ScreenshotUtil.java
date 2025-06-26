@@ -37,7 +37,7 @@ public class ScreenshotUtil {
      * @param stepDescription description of the step for the screenshot
      */
     public static void captureAndAttachScreenshot(String stepDescription) {
-        WebDriver driver = DriverFactory.getDriver();
+        WebDriver driver = DriverFactory.getDriver("POS");
         ExtentTest extentTest = TestNGListener.getTest();
         if (driver == null || extentTest == null) return;
 
