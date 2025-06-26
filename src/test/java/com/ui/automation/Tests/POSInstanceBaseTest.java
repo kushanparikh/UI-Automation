@@ -14,6 +14,7 @@ public abstract class POSInstanceBaseTest {
         posManager = POSInstanceManager.getInstance();
         posInstance = posManager.acquireInstance();
         System.out.println("[Thread " + Thread.currentThread().getId() + "] Acquired: " + posInstance);
+        // TODO: Add logic to login to the POS application
     }
 
     @AfterClass(alwaysRun = true)
@@ -21,6 +22,7 @@ public abstract class POSInstanceBaseTest {
         if (posInstance != null && posManager != null) {
             posManager.releaseInstance(posInstance);
             System.out.println("[Thread " + Thread.currentThread().getId() + "] Released: " + posInstance);
+            // TODO: Add logic to logout from the POS application
         }
     }
 } 
