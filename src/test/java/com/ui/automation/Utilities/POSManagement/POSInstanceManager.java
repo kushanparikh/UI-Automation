@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
 import java.util.Arrays;
 
 public class POSInstanceManager {

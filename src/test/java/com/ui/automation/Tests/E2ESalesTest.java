@@ -25,7 +25,7 @@ public class E2ESalesTest extends E2EBaseTest {
         // 2. ACT: Perform the transaction in the Point of Sale application.
         POSTransactionPage posPage = new POSTransactionPage(driver);
         // Assume this method returns the transaction ID
-        String transactionId = posPage.itemPanel().completeSaleAndGetTransactionId("ITEM123");
+        String transactionId = posPage.completeSaleAndGetTransactionId("ITEM123");
 
         // 3. SYNCHRONIZE: Wait for the back-end to process the transaction.
         DatabaseUtil.waitForTransactionStatus(transactionId, 2, 15); // Wait up to 15s for status 2
